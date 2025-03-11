@@ -6,12 +6,15 @@ const userSchema = z.object({
    email: z.string().email("Invalid email"),
    password: z.string().min(8, "Password must be at least 8 characters"),
    passwordConfirmation: z.string(),
+   roles: z.string(),
 });
 
 export function validateUser(data: IUser) {
    const validatedUser = userSchema.safeParse(data);
+
    if (!validatedUser.success) {
       throw new Error(`${validatedUser.error.issues[0].path}: ${validatedUser.error.issues[0].message}`);
    }
+
    return validatedUser.data;
 }

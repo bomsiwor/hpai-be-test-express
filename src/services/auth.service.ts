@@ -1,32 +1,7 @@
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import { IUser } from "../types/user";
-import { validateUser } from "../utils/validateUser";
 import * as userRepository from "../repositories/user.repository";
 import * as authRepository from "../repositories/auth.repository";
-
-// register
-export async function register(data: IUser) {
-   // zod validate user
-   validateUser(data);
-   const { name, email, password, passwordConfirmation } = data;
-
-   // email collision
-   const user = await userRepository.getOne({ email });
-   if (user) {
-      throw new Error("email already registered");
-   }
-
-   // password confirmation
-   if (password !== passwordConfirmation) throw new Error("passwords do not match");
-
-   //hash password
-   const hashedPassword = await bcrypt.hash(password, 13);
-
-   // create user
-   const newUser = await userRepository.create({ name, email, password: hashedPassword });
-   return newUser;
-}
 
 // login
 export async function login(data: { email: string; password: string }) {
@@ -38,12 +13,14 @@ export async function login(data: { email: string; password: string }) {
 
    // password not match
    const isMatch = await bcrypt.compare(password, user.password as string);
-   if (!isMatch) throw new Error("authentication failed");
+
+   if (!isMatch) throw new Error("authentication failed. Check your email or password");
 
    // create accessToken & refreshToken
    const payload = {
       userId: user._id,
    };
+
    const accessToken = jwt.sign(payload, process.env.JWT_ACCESS_KEY as string, {
       expiresIn: process.env.JWT_ACCESS_EXPIRESIN,
    });
@@ -54,12 +31,13 @@ export async function login(data: { email: string; password: string }) {
    // save refreshToken to database
    await authRepository.create({ userId: user._id.toString(), refreshToken });
 
-   return { user: { _id: user._id, name: user.name, email: user.email }, accessToken, refreshToken };
+   return { user: { _id: user._id, name: user.name, email: user.email, role: user.roles }, accessToken, refreshToken };
 }
 
 // logout
 export async function logout(refreshToken: string) {
    await authRepository.deleteToken({ refreshToken });
+
    return;
 }
 

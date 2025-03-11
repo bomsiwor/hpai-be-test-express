@@ -6,8 +6,6 @@ import cors from "cors";
 dotenv.config();
 
 import { connectDb } from "./utils/connectDb";
-import { storyRouter } from "./routes/story.route";
-import { stageRouter } from "./routes/stage.route";
 import { authRouter } from "./routes/auth.route";
 import { authMiddleware } from "./middleware/auth.middleware";
 
@@ -29,12 +27,9 @@ app.use(
    }),
 );
 
-app.use(authRouter);
+app.use("/api/auth", authRouter);
 
 app.use(authMiddleware);
-
-app.use(storyRouter);
-app.use(stageRouter);
 
 connectDb();
 

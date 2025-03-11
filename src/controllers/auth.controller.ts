@@ -73,29 +73,3 @@ export async function handleMe(req: Request, res: Response) {
       }
    }
 }
-
-export async function handleGetUser(req: Request, res: Response) {
-   try {
-      const userId = req.params.userId;
-      const user = await userService.getById(userId);
-
-      if (user) {
-         delete user.password;
-         res.status(200).json({
-            message: "user found",
-            data: { _id: user._id, name: user.name, email: user.email },
-         });
-      } else {
-         res.status(404).json({
-            message: "user not found",
-         });
-      }
-   } catch (error) {
-      if (error instanceof Error) {
-         res.status(404).json({
-            message: "user not found",
-            data: { ...error },
-         });
-      }
-   }
-}

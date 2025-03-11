@@ -7,4 +7,5 @@ export interface IUser {
    password: string;
    passwordConfirmation?: string;
    roles: TUserRole | string;
+   deletedAt?: Date | null;
 }

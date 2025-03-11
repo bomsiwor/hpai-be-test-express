@@ -11,5 +11,3 @@ authRouter.post("/logout", authMiddleware, authController.handleLogout);
 authRouter.get("/me", authMiddleware, authController.handleMe);
 
 authRouter.post("/", authMiddleware, authController.handleAuthorize);
-
-authRouter.get("/api/v1/user/:userId", authMiddleware, authController.handleGetUser);

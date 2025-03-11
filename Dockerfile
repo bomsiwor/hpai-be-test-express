@@ -1,13 +1,13 @@
-FROM node:22 AS build
+FROM node:22-slim AS base
+ENV PNPM_HOME="/pnpm"
+ENV PATH="$PNPM_HOME:$PATH"
+RUN corepack enable
+COPY . /app
+WORKDIR /app
 
-WORKDIR /apps/be-taleteller
+RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
+RUN pnpm add -g tsx
 
-COPY . .
+EXPOSE 8012
 
-RUN npm install
-
-RUN npm run build
-
-EXPOSE 3000
-
-CMD ["npm", "run", "start"]
+CMD [ "pnpm", "start" ]

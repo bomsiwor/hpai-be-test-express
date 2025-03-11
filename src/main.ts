@@ -3,11 +3,11 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 
-dotenv.config();
-
 import { connectDb } from "./utils/connectDb";
 import { authRouter } from "./routes/auth.route";
-import { authMiddleware } from "./middleware/auth.middleware";
+import { userRouter } from "./routes/user.route";
+
+dotenv.config();
 
 const app = express();
 
@@ -28,8 +28,7 @@ app.use(
 );
 
 app.use("/api/auth", authRouter);
-
-app.use(authMiddleware);
+app.use("/api/users", userRouter);
 
 connectDb();
 

@@ -5,12 +5,7 @@ const userSchema = new Schema({
    email: String,
    password: String,
    roles: String,
-});
-
-userSchema.virtual("likes", {
-   ref: "Like",
-   localField: "_id",
-   foreignField: "userId",
+   deletedAt: { type: Date, default: null },
 });
 
 export const User = model("User", userSchema);

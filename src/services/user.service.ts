@@ -37,3 +37,20 @@ export async function get() {
 
    return users;
 }
+
+export async function deleteById(id: string) {
+   // Check if user is superadmin
+   const checkedUser = await userRepository.getOne({ _id: id });
+   if (!checkedUser) {
+      return null;
+   }
+
+   // Can't delete superadmin
+   if (checkedUser.roles == "super-admin") {
+      throw new Error("Can not delete superadmin");
+   }
+
+   const user = await userRepository.deleteUser(id);
+
+   return user;
+}
